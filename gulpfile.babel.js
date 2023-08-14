@@ -1,12 +1,11 @@
 import gulp from 'gulp';
 import sourcemaps from 'gulp-sourcemaps';
 import mocha from 'gulp-mocha';
-import eslint from 'gulp-eslint';
-import babel from 'gulp-babel';
-import plumber from 'gulp-plumber';
+import eslint from "gulp-eslint-new";
+import babel from "gulp-babel";
 // import istanbul from 'gulp-babel-istanbul';
-import util from 'gulp-util';
-import del from 'del';
+import util from "gulp-util";
+import del from "del";
 // import Instrumenter from "isparta";
 
 const paths = {
@@ -37,7 +36,6 @@ gulp.task("lint", () =>
 gulp.task("build", () =>
   gulp
     .src(paths.sourceFiles)
-    .pipe(plumber())
     .pipe(sourcemaps.init())
     .pipe(
       babel({
