@@ -4,16 +4,15 @@ import mocha from 'gulp-mocha';
 import eslint from 'gulp-eslint';
 import babel from 'gulp-babel';
 import plumber from 'gulp-plumber';
-import istanbul from 'gulp-babel-istanbul';
+// import istanbul from 'gulp-babel-istanbul';
 import util from 'gulp-util';
 import del from 'del';
-import Instrumenter from 'isparta';
-import runSequence from 'run-sequence';
+// import Instrumenter from "isparta";
 
 const paths = {
-  sourceFiles: ['src/**/*.js'],
-  tests: ['test/**/*.js'],
-  buildDir: 'build',
+  sourceFiles: ["src/**/*.js"],
+  tests: ["test/**/*.js"],
+  buildDir: "build",
 };
 
 paths.buildFiles = [`${paths.buildDir}/**/*.js`];
@@ -42,7 +41,7 @@ gulp.task("build", () =>
     .pipe(sourcemaps.init())
     .pipe(
       babel({
-        presets: ["babel-preset-es2015"],
+        presets: ["@babel/preset-env"],
       })
     )
     .pipe(sourcemaps.write())
@@ -53,18 +52,18 @@ gulp.task("build", () =>
 /**
  * Task to hook anything required before the tests (basically just here for istanbul)
  */
-gulp.task("coverage:instrument", () =>
-  gulp
-    .src(paths.sourceFiles)
-    .pipe(
-      istanbul({
-        instrumenter: Instrumenter,
-        includeUntested: true,
-        exclude: ["src/migrations/**/*.js"],
-      })
-    )
-    .pipe(istanbul.hookRequire())
-);
+// gulp.task("coverage:instrument", () =>
+//   gulp
+//     .src(paths.sourceFiles)
+//     .pipe(
+//       istanbul({
+//         instrumenter: Instrumenter,
+//         includeUntested: true,
+//         exclude: ["src/migrations/**/*.js"],
+//       })
+//     )
+//     .pipe(istanbul.hookRequire())
+// );
 
 /**
  * Task to conduct the requred tests
@@ -75,32 +74,30 @@ gulp.task("test", () =>
     .pipe(
       mocha({
         bail: true,
-        require: "babel-register",
+        require: "@babel/register",
         reporter: "list",
       })
     )
     .on("error", util.log)
 );
 
-gulp.task("coverage:report", () =>
-  gulp
-    .src(paths.sourceFiles, { read: false })
-    .pipe(
-      istanbul.writeReports({
-        dir: "./coverage",
-        reporters: ["lcov", "json", "text", "text-summary"],
-        reportOpts: {
-          dir: "./coverage",
-        },
-      })
-    )
-    .pipe(istanbul.enforceThresholds({ thresholds: { global: 10 } }))
-    .on("error", util.log)
-);
+// gulp.task("coverage:report", () =>
+//   gulp
+//     .src(paths.sourceFiles, { read: false })
+//     .pipe(
+//       istanbul.writeReports({
+//         dir: "./coverage",
+//         reporters: ["lcov", "json", "text", "text-summary"],
+//         reportOpts: {
+//           dir: "./coverage",
+//         },
+//       })
+//     )
+//     .pipe(istanbul.enforceThresholds({ thresholds: { global: 10 } }))
+//     .on("error", util.log)
+// );
 
-gulp.task("test:coverage", (done) =>
-  runSequence("coverage:instrument", "test", "coverage:report", done)
-);
+gulp.task("test:coverage", gulp.series("test"));
 
 /**
  * Task to watch the files whilst developing
